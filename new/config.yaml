@@ -2,17 +2,25 @@ apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: fetch-supplier-data-pipeline
+  namespace: ai-northwind  # Ensure this namespace is unique to the owning application
 spec:
-  entryPoint: main
+  entrypoint: main  # Correct spelling of "entrypoint"
   templates:
     - name: main
-      type: custom
-      spec:
-        runtime: python:3.8
-        entryPoints:
-          main:
-            command: ["python", "fetch_suppliers.py"]
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "512Mi"
+      script:
+        image: python:3.8
+        command: [python]
+        source: |
+          import requests
+          import json
+          url = "https://services.odata.org/V2/Northwind/Northwind.svc/Suppliers?$format=json"
+          response = requests.get(url)
+          if response.status_code == 200:
+              with open("/tmp/suppliers.json", "w") as f:
+                  f.write(json.dumps(response.json()))
+          else:
+              print(f"Failed to fetch data. Status code: {response.status_code}")
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "512Mi"
