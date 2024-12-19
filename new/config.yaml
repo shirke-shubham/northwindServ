@@ -1,64 +1,14 @@
-# --- Argo CD Project Configuration ---
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
+apiVersion: ai.sap.com/v1alpha1
+kind: pipeline
 metadata:
-  name: mt-be24c298
-  namespace: argocd
+  name: fetch-supplier-data-pipeline
 spec:
-  description: Project to manage northwind workflows
-  sourceRepos:
-    - '*'
-  destinations:
-    - namespace: mt-be24c298
-      server: https://kubernetes.default.svc
-  clusterResourceWhitelist:
-    - group: argoproj.io
-      kind: Workflow
-  namespaceResourceWhitelist:
-    - group: ""
-      kind: "*"
-
----
-
-# --- Workflow Resource (Minimal Valid Workflow) ---
-apiVersion: argoproj.io/v1alpha1
-kind: Workflow
-metadata:
-  name: test-workflow
-  namespace: mt-be24c298
-spec:
-  entrypoint: simple-test
+  entryPoint: main
   templates:
-    - name: simple-test
-      container:
-        image: alpine:latest
-        command: ["sh", "-c"]
-        args: ["echo Hello, World!"]
-
----
-
-# --- Role for Managing Workflows ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: workflow-admin
-rules:
-  - apiGroups: ["argoproj.io"]
-    resources: ["workflows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
----
-
-# --- Bind Role to Service Account ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: workflow-admin-binding
-subjects:
-  - kind: ServiceAccount
-    name: default
-    namespace: mt-be24c298
-roleRef:
-  kind: ClusterRole
-  name: workflow-admin
-  apiGroup: rbac.authorization.k8s.io
+    - name: main
+      type: custom
+      spec:
+        runtime: python:3.8
+        entryPoints:
+          main:
+            command: ["python", "fetch_suppliers.py"]
