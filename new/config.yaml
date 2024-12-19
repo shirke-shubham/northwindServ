@@ -1,0 +1,19 @@
+version: '1.0'
+name: 'fetch-northwind-supplier'
+entrypoint: 'fetch_suppliers.py'
+runtime:
+  language: 'python'
+  version: '3.8'
+  packages:
+    - name: 'requests'
+      version: '2.26.0'
+
+parameters:
+  input:
+    - name: 'northwind_url'
+      type: 'string'
+      default: 'https://services.odata.org/V2/Northwind/Northwind.svc/Suppliers'
+  output:
+    - name: 'output_file'
+      type: 'string'
+      default: 'suppliers.json'
