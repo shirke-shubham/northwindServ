@@ -2,7 +2,7 @@ import requests
 
 def fetch_suppliers():
     # OData Service URL
-    url = "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$format=json"
+    url = "https://11f3cbectrial-dev-demo-ai-srv.cfapps.us10-001.hana.ondemand.com/odata/v4/ideal-rga-srv/Rga_Header?$format=json"
 
     try:
         # Send GET request to fetch supplier data
