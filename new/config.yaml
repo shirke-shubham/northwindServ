@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: fetch-supplier-data-pipeline
-  namespace: ai-northwind  # Ensure this namespace is unique to the owning application
+  namespace: northwind-ser-app  # Ensure this namespace is unique to the owning application
 spec:
   entrypoint: main  # Correct spelling of "entrypoint"
   templates:
