@@ -1,14 +1,53 @@
-apiVersion: ai.sap.com/v1alpha1
-kind: pipeline
+# --- Workflow Configuration to Fetch Northwind Supplier Data ---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
 metadata:
-  name: fetch-supplier-data-pipeline
+  name: fetch-northwind-supplier
+  namespace: mt-be24c298  # Replace with your namespace
 spec:
-  entryPoint: main
+  entrypoint: fetch-supplier-data
   templates:
-    - name: main
-      type: custom
-      spec:
-        runtime: python:3.8
-        entryPoints:
-          main:
-            command: ["python", "fetch_suppliers.py"]
+    - name: fetch-supplier-data
+      container:
+        image: curlimages/curl:latest  # Using a lightweight curl image
+        command: [sh, -c]
+        args:
+          - "curl -o /tmp/suppliers.json https://services.odata.org/V2/Northwind/Northwind.svc/Suppliers?$format=json"
+        volumeMounts:
+          - name: output
+            mountPath: /tmp
+      outputs:
+        artifacts:
+          - name: supplier-data
+            path: /tmp/suppliers.json
+  volumes:
+    - name: output
+      emptyDir: {}
+
+---
+
+# --- Role for Managing Workflows ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: workflow-admin
+rules:
+  - apiGroups: ["argoproj.io"]
+    resources: ["workflows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+
+# --- Bind Role to Service Account ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: workflow-admin-binding
+subjects:
+  - kind: ServiceAccount
+    name: default  # Replace with your service account
+    namespace: mt-be24c298
+roleRef:
+  kind: ClusterRole
+  name: workflow-admin
+  apiGroup: rbac.authorization.k8s.io
