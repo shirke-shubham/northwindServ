@@ -3,7 +3,7 @@ kind: WorkflowTemplate
 metadata:
   name: fetch-supplier-pipeline
   annotations:
-    scenarios.ai.sap.com/description: "Introduction to SAP AI Core"
+    scenarios.ai.sap.com/description: "Introduction to SAP AI Coreeee"
     scenarios.ai.sap.com/name: "NORTHWIND-DEMO-scenario"
     executables.ai.sap.com/description: "Greets the userssss"
     executables.ai.sap.com/name: "NORTHWIND Pipelineee"
