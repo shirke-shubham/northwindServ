@@ -2,21 +2,38 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: mt-be24c298  # Project Name
-  namespace: argocd  # Namespace where Argo CD is installed
+  name: mt-be24c298
+  namespace: argocd
 spec:
   description: Project to manage northwind workflows
   sourceRepos:
-    - '*'  # Allow all repositories
+    - '*'
   destinations:
-    - namespace: mt-be24c298  # Namespace for the workflows
-      server: https://kubernetes.default.svc  # Kubernetes API server URL
+    - namespace: mt-be24c298
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: argoproj.io
-      kind: Workflow  # Allow Workflow resources
+      kind: Workflow
   namespaceResourceWhitelist:
-    - group: ""  # Allow core resources (e.g., Pods, ConfigMaps)
+    - group: ""
       kind: "*"
+
+---
+
+# --- Workflow Resource (Minimal Valid Workflow) ---
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: test-workflow
+  namespace: mt-be24c298
+spec:
+  entrypoint: simple-test
+  templates:
+    - name: simple-test
+      container:
+        image: alpine:latest
+        command: ["sh", "-c"]
+        args: ["echo Hello, World!"]
 
 ---
 
@@ -24,7 +41,7 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: workflow-admin  # Role Name
+  name: workflow-admin
 rules:
   - apiGroups: ["argoproj.io"]
     resources: ["workflows"]
@@ -36,40 +53,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: workflow-admin-binding  # Role Binding Name
+  name: workflow-admin-binding
 subjects:
   - kind: ServiceAccount
-    name: default  # Default Service Account (can be customized)
-    namespace: mt-be24c298  # Namespace where the app runs
+    name: default
+    namespace: mt-be24c298
 roleRef:
   kind: ClusterRole
   name: workflow-admin
   apiGroup: rbac.authorization.k8s.io
-
----
-
-# --- Workflow Template ---
-apiVersion: argoproj.io/v1alpha1
-kind: Workflow
-metadata:
-  name: fetch-northwind-supplier  # Workflow Name
-  namespace: mt-be24c298  # Replace with your namespace
-spec:
-  entrypoint: fetch-supplier-data
-  templates:
-    - name: fetch-supplier-data
-      container:
-        image: curlimages/curl:latest
-        command: [sh, -c]
-        args:
-          - "curl -o /tmp/suppliers.json https://services.odata.org/V2/Northwind/Northwind.svc/Suppliers?$format=json"
-        volumeMounts:
-          - name: output
-            mountPath: /tmp
-      outputs:
-        artifacts:
-          - name: supplier-data
-            path: /tmp/suppliers.json
-  volumes:
-    - name: output
-      emptyDir: {}
