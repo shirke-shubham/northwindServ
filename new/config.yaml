@@ -7,17 +7,16 @@ metadata:
 spec:
   description: Project to manage northwind workflows
   sourceRepos:
-    - '*'  # Allow all repositories, or specify your Git repo
+    - '*'  # Allow all repositories
   destinations:
-    - namespace: '*'  # Allow all namespaces, or specify a namespace
+    - namespace: mt-be24c298  # Namespace for the workflows
       server: https://kubernetes.default.svc  # Kubernetes API server URL
   clusterResourceWhitelist:
     - group: argoproj.io
       kind: Workflow  # Allow Workflow resources
   namespaceResourceWhitelist:
-    - group: ""  # Allow all core resources (e.g., Pods, ConfigMaps)
+    - group: ""  # Allow core resources (e.g., Pods, ConfigMaps)
       kind: "*"
-  roles: []  # Add roles if necessary for fine-grained control
 
 ---
 
@@ -40,8 +39,8 @@ metadata:
   name: workflow-admin-binding  # Role Binding Name
 subjects:
   - kind: ServiceAccount
-    name: default  # Replace with your Service Account name
-    namespace: mt-be24c298  # Namespace where your app runs
+    name: default  # Default Service Account (can be customized)
+    namespace: mt-be24c298  # Namespace where the app runs
 roleRef:
   kind: ClusterRole
   name: workflow-admin
@@ -49,11 +48,11 @@ roleRef:
 
 ---
 
-# --- Workflow Template (Optional: Add Your Workflow Resource) ---
+# --- Workflow Template ---
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: fetch-northwind-supplier
+  name: fetch-northwind-supplier  # Workflow Name
   namespace: mt-be24c298  # Replace with your namespace
 spec:
   entrypoint: fetch-supplier-data
