@@ -1,26 +1,26 @@
 import requests
-import json
-import argparse
 
-def fetch_suppliers(northwind_url, output_file):
+def fetch_suppliers():
+    # OData Service URL
+    url = "https://services.odata.org/northwind/northwind.svc/Suppliers?$format=json"
+
     try:
-        response = requests.get(northwind_url, headers={"Accept": "application/json"})
-        response.raise_for_status()  # Raise an exception for HTTP errors
+        # Send GET request to fetch supplier data
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an error for HTTP errors
 
+        # Parse JSON response
         data = response.json()
-        suppliers = data.get('value', [])  # Extract the suppliers
+        suppliers = response.get("value", [])
 
-        with open(output_file, 'w') as file:
-            json.dump(suppliers, file, indent=4)
+        # Display supplier data
+        print("Supplier Data:")
+        for supplier in suppliers:
+            print("ID: {supplier['SupplierID']}, Name: {supplier['CompanyName']}, Country: {supplier['Country']}")
+            # print("ID: {supplier[1]}")
 
-        print(f"Supplier data has been written to {output_file}")
     except Exception as e:
         print(f"Error fetching supplier data: {e}")
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--northwind_url', type=str, required=True, help='Northwind OData Service URL')
-    parser.add_argument('--output_file', type=str, required=True, help='Output JSON file path')
-    args = parser.parse_args()
-
-    fetch_suppliers(args.northwind_url, args.output_file)
+if __name__ == "__main__":
+    fetch_suppliers()
