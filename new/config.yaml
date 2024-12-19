@@ -2,7 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
   name: fetch-supplier-data-pipeline-new  # Updated name
-  namespace: <your-namespace>  # Specify your application namespace
 spec:
   entryPoint: main
   templates:
