@@ -12,7 +12,7 @@ metadata:
     ai.sap.com/version: "1.0"
 spec:
   imagePullSecrets:
-    - name:  # your docker registry secret
+    - name: credstutorialrepo # your docker registry secret
   entrypoint: mypipeline
   templates:
   - name: mypipeline
@@ -22,7 +22,7 @@ spec:
 
   - name: mycodeblock1
     container:
-      image: docker.io/shirke0706/house-price:01 # Your docker image name
+      image: docker.io/<YOUR_DOCKER_USERNAME>/house-price:01 # Your docker image name
       command: ["/bin/sh", "-c"]
       args:
-        - "python /app/src/main.py"
+        - "python /app/src/main.py" 
