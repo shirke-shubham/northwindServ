@@ -13,7 +13,7 @@ metadata:
 spec:
   entrypoint: mypipelinedemochangedtokeepitunique
   templates:
-  - name: mypipeline
+  - name: mypipelinedemochangedtokeepitunique
     steps:
     - - name: greet
         template: greeter
