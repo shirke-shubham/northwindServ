@@ -11,7 +11,7 @@ metadata:
     scenarios.ai.sap.com/id: "learning"
     ai.sap.com/version: "2.0"
 spec:
-  entrypoint: mypipeline
+  entrypoint: mypipelinedemochangedtokeepitunique
   templates:
   - name: mypipeline
     steps:
